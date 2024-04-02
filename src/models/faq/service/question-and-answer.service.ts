@@ -79,4 +79,8 @@ export class QuestionAndAnswerService {
       categoryId: options.categoryId,
     });
   }
+
+  async deleteAll() {
+    return this.questionAndAnswerRepository.deleteAll({});
+  }
 }

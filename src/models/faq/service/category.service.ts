@@ -41,6 +41,12 @@ export class CategoryService {
     });
   }
 
+  async findCategoryByName(name: string) {
+    return this.categoriesRepository.findOne({
+      categoryName: name,
+    });
+  }
+
   async findAll(pagination: PaginationType) {
     return this.categoriesRepository.findAll(
       {},

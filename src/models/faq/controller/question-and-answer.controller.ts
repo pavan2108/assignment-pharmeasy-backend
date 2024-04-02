@@ -14,7 +14,7 @@ import {
   CreateQuestionAndAnswerDto,
 } from '../dto/create-question-and-answer.dto';
 
-@Controller('faq/question-and-answer')
+@Controller('faq/question_and_answer')
 @ApiTags('Question And Answer')
 export class QuestionAndAnswerController {
   constructor(

@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -13,12 +15,14 @@ import {
   CreateQuestionAndAnswerBulkDto,
   CreateQuestionAndAnswerDto,
 } from '../dto/create-question-and-answer.dto';
+import { CategoryService } from '../service/category.service';
 
 @Controller('faq/question_and_answer')
 @ApiTags('Question And Answer')
 export class QuestionAndAnswerController {
   constructor(
     private readonly questionAndAnswerService: QuestionAndAnswerService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   @Post(':categoryId')
@@ -32,6 +36,20 @@ export class QuestionAndAnswerController {
     @Body() createQuestionAndAnswerDto: CreateQuestionAndAnswerBulkDto,
     @Param('categoryId') categoryId: string,
   ) {
+    const isCategoryExist = await this.categoryService.findCategoryById(
+      categoryId,
+    );
+    if (isCategoryExist === null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          errors: {
+            message: 'category not found',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     for (const index in createQuestionAndAnswerDto.data) {
       createQuestionAndAnswerDto.data[index].categoryId = categoryId;
     }
@@ -66,6 +84,20 @@ export class QuestionAndAnswerController {
     @Param('page') page: number,
     @Param('limit') limit: number,
   ) {
+    const isCategoryExist = await this.categoryService.findCategoryById(
+      categoryId,
+    );
+    if (isCategoryExist === null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          errors: {
+            message: 'category not found',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return this.questionAndAnswerService.findQuestionAndAnswerById({
       categoryId: categoryId,
       page: page,
@@ -81,6 +113,20 @@ export class QuestionAndAnswerController {
     required: true,
   })
   async deleteByCategoryId(@Param('categoryId') categoryId: string) {
+    const isCategoryExist = await this.categoryService.findCategoryById(
+      categoryId,
+    );
+    if (isCategoryExist === null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          errors: {
+            message: 'category not found',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return this.questionAndAnswerService.deleteQuestionAndAnswersOfCategory({
       categoryId: categoryId,
     });

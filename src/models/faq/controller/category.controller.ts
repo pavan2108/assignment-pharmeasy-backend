@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -165,6 +167,20 @@ export class CategoryController {
     allowEmptyValue: false,
   })
   async getParticularCategory(@Param('categoryId') categoryId: string) {
+    const isCategoryExist = await this.categoryService.findCategoryById(
+      categoryId,
+    );
+    if (isCategoryExist === null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          errors: {
+            message: 'category not found',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return this.categoryService.findCategoryById(categoryId);
   }
 
@@ -179,6 +195,20 @@ export class CategoryController {
       '#### It is the id of category you want to delete, It deletes all the question and answer data linked with this categories',
   })
   async deleteOneWithId(@Param('categoryId') categoryId: string) {
+    const isCategoryExist = await this.categoryService.findCategoryById(
+      categoryId,
+    );
+    if (isCategoryExist === null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          errors: {
+            message: 'category not found',
+          },
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
     await this.categoryService.deleteCategoryById(categoryId);
     await this.questionAndAnswerService.deleteQuestionAndAnswersOfCategory({
       categoryId: categoryId,
